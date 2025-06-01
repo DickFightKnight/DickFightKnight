@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node.js Installation Command Helper</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                    }
+                }
+            }
+        }
+
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-primary mb-2">Node.js Installation Command Helper</h1>
+            <p class="text-gray-600 dark:text-gray-400">Understand and customize the Node.js installation command using NVM with input validation</p>
+        </header>
+
+        <main>
+            <!-- Original Command Display -->
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-6">
+                <h2 class="font-semibold mb-2">Original Command:</h2>
+                <div class="bg-gray-200 dark:bg-gray-700 p-3 rounded font-mono text-sm overflow-x-auto">
+                    env VERSION=`python tools/getnodeversion.py` make install DESTDIR=`nvm_version_path v$VERSION` PREFIX=""
+                </div>
+            </div>
+
+            <!-- Command Explanation -->
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-8">
+                <h2 class="font-semibold mb-4">Command Explanation:</h2>
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-medium text-primary">env VERSION=`python tools/getnodeversion.py`</h3>
+                        <p class="mt-1 text-sm">Sets an environment variable <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">VERSION</code> by running a Python script that determines the Node.js version to install.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-primary">make install</h3>
+                        <p class="mt-1 text-sm">Runs the install target from the Makefile to compile and install Node.js.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-primary">DESTDIR=`nvm_version_path v$VERSION`</h3>
+                        <p class="mt-1 text-sm">Sets the destination directory for the installation. The <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">nvm_version_path</code> function returns the path where NVM stores the specified Node.js version.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-primary">PREFIX=""</h3>
+                        <p class="mt-1 text-sm">Sets an empty prefix for the installation path. This affects where binaries, libraries, etc. are installed relative to the destination directory.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-8">
+                <h2 class="font-semibold mb-4">Customize Command:</h2>
+                <form id="commandForm" class="space-y-6">
+                    <!-- Python Script Path -->
+                    <div>
+                        <label for="pythonScript" class="block text-sm font-medium mb-2">Python Script Path:</label>
+                        <input 
+                            type="text" 
+                            id="pythonScript" 
+                            value="tools/getnodeversion.py" 
+                            class="w-full p-3 border rounded-lg text-base bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                        >
+                        <div id="pythonScriptError" class="text-red-600 dark:text-red-400 text-sm mt-2 hidden fade-in">
+                            <div class="flex items-start">
+                                <svg class="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <div class="font-medium">Invalid file path</div>
+                                    <div class="mt-1">Please avoid spaces and special characters like $, ;, `, or &</div>
+                                    <div class="mt-2 text-xs">
+                                        <span class="font-medium">Valid examples:</span>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">tools/getnodeversion.py</code>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">scripts/get-version.py</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Make Target -->
+                    <div>
+                        <label for="makeTarget" class="block text-sm font-medium mb-2">Make Target:</label>
+                        <input 
+                            type="text" 
+                            id="makeTarget" 
+                            value="install" 
+                            class="w-full p-3 border rounded-lg text-base bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                        >
+                        <div id="makeTargetError" class="text-red-600 dark:text-red-400 text-sm mt-2 hidden fade-in">
+                            <div class="flex items-start">
+                                <svg class="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <div class="font-medium">Invalid make target</div>
+                                    <div class="mt-1">Only letters, numbers, hyphens (-) and underscores (_) are allowed</div>
+                                    <div class="mt-2 text-xs">
+                                        <span class="font-medium">Valid examples:</span>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">install</code>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">install-debug</code>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">build_all</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Version -->
+                    <div>
+                        <label for="customVersion" class="block text-sm font-medium mb-2">Custom Version:</label>
+                        <div class="flex items-center space-x-3 mb-2">
+                            <input type="checkbox" id="useCustomVersion" class="h-4 w-4 text-primary">
+                            <label for="useCustomVersion" class="text-sm">Use custom version instead of Python script</label>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="customVersion" 
+                            placeholder="e.g. 16.14.0" 
+                            class="w-full p-3 border rounded-lg text-base bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled
+                        >
+                        <div id="customVersionError" class="text-red-600 dark:text-red-400 text-sm mt-2 hidden fade-in">
+                            <div class="flex items-start">
+                                <svg class="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <div class="font-medium">Invalid version format</div>
+                                    <div class="mt-1">Please use semantic version format with numbers and dots only</div>
+                                    <div class="mt-2 text-xs">
+                                        <span class="font-medium">Valid examples:</span>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">16.14.0</code>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">18.0.1</code>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">20.5.0</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREFIX -->
+                    <div>
+                        <label for="prefix" class="block text-sm font-medium mb-2">PREFIX value (optional):</label>
+                        <input 
+                            type="text" 
+                            id="prefix" 
+                            value="" 
+                            placeholder="/usr/local or leave empty" 
+                            class="w-full p-3 border rounded-lg text-base bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                        >
+                        <div id="prefixError" class="text-red-600 dark:text-red-400 text-sm mt-2 hidden fade-in">
+                            <div class="flex items-start">
+                                <svg class="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <div class="font-medium">Invalid prefix path</div>
+                                    <div class="mt-1">Avoid special characters that could be interpreted as commands</div>
+                                    <div class="mt-2 text-xs">
+                                        <span class="font-medium">Valid examples:</span>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">/usr/local</code>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">/opt/node</code>
+                                        <code class="bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded ml-1">[empty]</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Generated Command -->
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-8">
+                <h2 class="font-semibold mb-3">Generated Command:</h2>
+                <div id="generatedCommand" class="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg font-mono text-sm mb-4 overflow-x-auto transition-all">
+                    env VERSION=`python tools/getnodeversion.py` make install DESTDIR=`nvm_version_path v$VERSION` PREFIX=""
+                </div>
+                <div class="flex space-x-3">
+                    <button id="copyButton" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all">
+                        Copy to Clipboard
+                    </button>
+                    <button id="resetButton" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-all">
+                        Reset to Defaults
+                    </button>
+                </div>
+            </div>
+
+            <!-- Validation Test -->
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-4 rounded-lg mb-8">
+                <h2 class="font-semibold mb-3 text-yellow-800 dark:text-yellow-200">Test Input Validation:</h2>
+                <button id="testButton" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50 transition-all mb-4">
+                    Inject Invalid Inputs
+                </button>
+                <div id="testResults" class="hidden">
+                    <div id="testResultsContent"></div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="bg-blue-100 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-800 p-4 rounded-lg">
+                <h2 class="font-semibold mb-3 text-blue-800 dark:text-blue-200">Instructions for Use:</h2>
+                <ol class="list-decimal list-inside space-y-2 text-blue-800 dark:text-blue-200">
+                    <li>Customize the command parameters as needed in the form above</li>
+                    <li>Ensure all validation errors are resolved (no red error messages)</li>
+                    <li>Copy the generated command using the button</li>
+                    <li>Open your terminal and navigate to your Node.js source directory</li>
+                    <li>Paste and execute the command</li>
+                </ol>
+                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded">
+                    <p class="text-sm text-blue-800 dark:text-blue-200">
+                        <strong>Prerequisites:</strong> Make sure you have NVM installed and Python available in your environment before running this command.
+                    </p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
+            <p>Node.js Installation Command Helper | Created with Poe</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const commandForm = document.getElementById('commandForm');
+            const generatedCommand = document.getElementById('generatedCommand');
+            const copyButton = document.getElementById('copyButton');
+            const resetButton = document.getElementById('resetButton');
+            const testButton = document.getElementById('testButton');
+            const testResults = document.getElementById('testResults');
+            const testResultsContent = document.getElementById('testResultsContent');
+            
+            // Form inputs
+            const pythonScriptInput = document.getElementById('pythonScript');
+            const makeTargetInput = document.getElementById('makeTarget');
+            const customVersionInput = document.getElementById('customVersion');
+            const useCustomVersionCheckbox = document.getElementById('useCustomVersion');
+            const prefixInput = document.getElementById('prefix');
+            
+            // Error message elements
+            const pythonScriptError = document.getElementById('pythonScriptError');
+            const makeTargetError = document.getElementById('makeTargetError');
+            const customVersionError = document.getElementById('customVersionError');
+            const prefixError = document.getElementById('prefixError');
+            
+            // Default values for reset functionality
+            const defaultValues = {
+                pythonScript: 'tools/getnodeversion.py',
+                makeTarget: 'install',
+                customVersion: '',
+                useCustomVersion: false,
+                prefix: ''
+            };
+            
+            // Validation patterns
+            const patterns = {
+                pythonScript: /^[a-zA-Z0-9\/\._\-]+$/,
+                makeTarget: /^[a-zA-Z0-9_\-]+$/,
+                version: /^[0-9]+(\.[0-9]+)*$/,
+                prefix: /^[a-zA-Z0-9\/\._\-]*$/
+            };
+            
+            // Validation function
+            function validateInput(input, pattern, errorElement, isRequired = false) {
+                const value = input.value.trim();
+                
+                // Check if field is required and empty
+                if (isRequired && value === '') {
+                    showError(input, errorElement);
+                    return false;
+                }
+                
+                // Check pattern (allow empty for optional fields)
+                if (value !== '' && !pattern.test(value)) {
+                    showError(input, errorElement);
+                    return false;
+                }
+                
+                hideError(input, errorElement);
+                return true;
+            }
+            
+            function showError(input, errorElement) {
+                errorElement.classList.remove('hidden');
+                input.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
+                input.classList.remove('border-gray-300', 'dark:border-gray-600');
+            }
+            
+            function hideError(input, errorElement) {
+                errorElement.classList.add('hidden');
+                input.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
+                input.classList.add('border-gray-300', 'dark:border-gray-600');
+            }
+            
+            function validateAllInputs() {
+                const pythonScriptValid = validateInput(pythonScriptInput, patterns.pythonScript, pythonScriptError);
+                const makeTargetValid = validateInput(makeTargetInput, patterns.makeTarget, makeTargetError);
+                const prefixValid = validateInput(prefixInput, patterns.prefix, prefixError);
+                
+                // Custom version validation (only when checkbox is checked)
+                let versionValid = true;
+                if (useCustomVersionCheckbox.checked) {
+                    versionValid = validateInput(customVersionInput, patterns.version, customVersionError, true);
+                } else {
+                    hideError(customVersionInput, customVersionError);
+                }
+                
+                return pythonScriptValid && makeTargetValid && prefixValid && versionValid;
+            }
+            
+            function updateCommand() {
+                const pythonScript = pythonScriptInput.value.trim();
+                const makeTarget = makeTargetInput.value.trim();
+                const prefix = prefixInput.value.trim();
+                const useCustom = useCustomVersionCheckbox.checked;
+                const version = customVersionInput.value.trim();
+                
+                let command = '';
+                
+                if (useCustom && version) {
+                    command = `env VERSION="${version}" make ${makeTarget} DESTDIR=\`nvm_version_path v$VERSION\` PREFIX="${prefix}"`;
+                } else {
+                    command = `env VERSION=\`python ${pythonScript}\` make ${makeTarget} DESTDIR=\`nvm_version_path v$VERSION\` PREFIX="${prefix}"`;
+                }
+                
+                generatedCommand.textContent = command;
+            }
+            
+            function validateAndUpdateCommand() {
+                const isValid = validateAllInputs();
+                
+                // Update copy button state
+                copyButton.disabled = !isValid;
+                
+                // Update visual feedback
+                if (isValid) {
+                    generatedCommand.classList.remove('opacity-50');
+                } else {
+                    generatedCommand.classList.add('opacity-50');
+                }
+                
+                updateCommand();
+            }
+            
+            // Event listeners
+            commandForm.addEventListener('input', validateAndUpdateCommand);
+            
+            useCustomVersionCheckbox.addEventListener('change', function() {
+                customVersionInput.disabled = !this.checked;
+                if (!this.checked) {
+                    customVersionInput.value = '';
+                }
+                validateAndUpdateCommand();
+            });
+            
+            // Copy to clipboard
+            copyButton.addEventListener('click', function() {
+                if (this.disabled) return;
+                
+                const command = generatedCommand.textContent;
+                
+                navigator.clipboard.writeText(command).then(() => {
+                    const originalText = this.textContent;
+                    this.textContent = 'Copied!';
+                    this.classList.add('bg-green-600');
+                    this.classList.remove('bg-primary');
+                    
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.classList.remove('bg-green-600');
+                        this.classList.add('bg-primary');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    this.textContent = 'Copy failed';
+                    setTimeout(() => {
+                        this.textContent = 'Copy to Clipboard';
+                    }, 2000);
+                });
+            });
+            
+            // Reset form
+            resetButton.addEventListener('click', function() {
+                Object.keys(defaultValues).forEach(key => {
+                    if (key === 'useCustomVersion') {
+                        useCustomVersionCheckbox.checked = defaultValues[key];
+                        customVersionInput.disabled = !defaultValues[key];
+                    } else {
+                        const element = document.getElementById(key);
+                        if (element) {
+                            element.value = defaultValues[key];
+                        }
+                    }
+                });
+                
+                // Hide all error messages
+                [pythonScriptError, makeTargetError, customVersionError, prefixError].forEach(error => {
+                    error.classList.add('hidden');
+                });
+                
+                // Reset input styling
+                [pythonScriptInput, makeTargetInput, customVersionInput, prefixInput].forEach(input => {
+                    input.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
+                    input.classList.add('border-gray-300', 'dark:border-gray-600');
+                });
+                
+                validateAndUpdateCommand();
+                testResults.classList.add('hidden');
+            });
+            
+            // Test invalid inputs
+            testButton.addEventListener('click', function() {
+                // Inject invalid values
+                pythonScriptInput.value = 'path with spaces; rm -rf *';
+                makeTargetInput.value = 'install && echo "Hacked"';
+                useCustomVersionCheckbox.checked = true;
+                customVersionInput.disabled = false;
+                customVersionInput.value = 'latest-version!@#';
+                prefixInput.value = '$(cat /etc/passwd)';
+                
+                validateAndUpdateCommand();
+                
+                // Show test results
+                testResults.classList.remove('hidden');
+                const isButtonDisabled = copyButton.disabled;
+                const errorCount = document.querySelectorAll('.text-red-600:not(.hidden)').length;
+                
+                testResultsContent.innerHTML = `
+                    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-yellow-300 dark:border-yellow-700">
+                        <h4 class="font-medium text-yellow-800 dark:text-yellow-200 mb-3">Validation Test Results:</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center">
+                                <span class="font-medium w-32">Invalid inputs:</span>
+                                <span class="text-red-600 dark:text-red-400">${errorCount} detected</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="font-medium w-32">Copy button:</span>
+                                <span class="${isButtonDisabled ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                                    ${isButtonDisabled ? '✅ Properly disabled' : '❌ Should be disabled'}
+                                </span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="font-medium w-32">Error messages:</span>
+                                <span class="${errorCount > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                                    ${errorCount > 0 ? '✅ Showing guidance' : '❌ Not showing'}
+                                </span>
+                            </div>
+                        </div>
+                        <p class="mt-3 text-xs text-yellow-700 dark:text-yellow-300">
+                            The validation successfully prevented potentially dangerous command injection attempts.
+                        </p>
+                    </div>
+                `;
+            });
+            
+            // Initial validation
+            validateAndUpdateCommand();
+        });
+    </script>
+</body>
+</html>
